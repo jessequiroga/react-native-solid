@@ -1,157 +1,116 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, Button } from 'react-native';
-
+import { StatusBar } from 'expo-status-bar';
+import React, { Component, useCallback } from 'react';
+import { Alert, Button, Linking, StyleSheet, Text, View, AsyncStorage } from 'react-native';
 import auth from "solid-auth-client";
+import { ExternalLogin } from './components/ExternalLogin'
 
-const styles = StyleSheet.create({
-	container: {
-		// flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		// backgroundColor: '#ecf0f1',
-	},
-	Button: {
-		width: 200,
-	},
-	input: {
-		width: 200,
-		height: 44,
-		padding: 10,
-		borderWidth: 1,
-		borderColor: 'black',
-		marginBottom: 10,
-	},
-});
-
-// const session_prom = new Promise(function (resolve, reject) {
-// 	auth.currentSession(() => {
-// 		reject('Login promise');
-// 	}, 200);
-// });
-
-// const sessionPromise = (session) => new Promise((resolve, reject) => {
-// 	auth.currentSession(() => {
-// 		(session) ? resolve(session) : reject(session);
-// 	}, 2000);
-// });
-
-const idp = "https://solid.community";
+// const externalLogin = (idp) => {
+// 	const openUrl = useCallback(async (idp) => {
+// 		const supported = await Linking.canOpenURL(idp);
+// 		if (supported) {
+// 			await Linking.openURL(idp);
+// 		} else {
+// 			Alert.alert("Cannot open URL: " + idp);
+// 		}
+// 	}, [idp]);
+// }
 
 export default class App extends Component {
 
 	constructor(props) {
 		super(props);
-		console.log("\tconstructor");
 		this.state = {
-			username: "",
-			password: "",
-			idp: "https://solid.community",
-			webId: "",
-			session: ""
+			session: "",
+			webId: ""
 		}
-		this.check_session = this.check_session.bind(this);
-		this.promise_session = this.promise_session.bind(this);
-		// session_prom.then(value => {
-		// 	console.log(value);
-		// }).catch(err => {
-		// 	console.log(err);
-		// });
-
+		// this.fun = this.fun.bind(this);
+		this.getWebId = this.getWebId.bind(this);
+		this.login = this.login.bind(this);
+		this.check = this.check.bind(this);
+		this.check();
 	}
 
-	check_session() {
-		auth.currentSession().then(resp => {
-			new Promise(function (resolve, reject) {
-				console.log("resp:" + resp);
-				return resp;
-			})
-		}).then(session => {
-			if (session) {
-				this.setState((state) => {
-					session: session
-				});
-				console.log("yes session, webid: " + this.state.session.webId);
-			} else {
-				console.log("no session");
-				/*auth login*/
-				this.do_login();
-			}
-		}).catch(err => {
-			console.error("error check session: " + err);
-		});
-	}
-
-	do_login() {
-		auth.login(idp).then(resp => {
-			new Promise(function (resolve, reject) {
-				console.log("resp: " + resp);
-				return resp; /* ??? */
-			})
-		}).then(resp => {
-			console.log("then resp: " + resp);
-			if (session) {
-				console.log("session webid: " + this.state.session.webId);
-			} else {
-				console.warn("error login");
-			}
-		}).catch(err => {
-			console.error("error check session: " + err);
-		});
-	}
-
-	async promise_login(): Promise<> {
-		console.log("\tpromise login");
-		return await auth.login(this.state.idp);
-	}
-
-	async promise_session(): Promise<> {
-		console.log("\promise_session");
-		// auth.login("https://solid.community");
-		return await auth.currentSession()/*.then(console.log("then session: " + session))*/;
-		// if (session) {
-		// 	console.log("yes");
-		// } else {
-		// 	console.log("no");
-		// 	auth.cu
-		// }
-		// console.log("\tsession: " + JSON.stringify(session));
-	}
-
-	// async login(idp) {
-	// 	const session = await solid.auth.currentSession();
-	// 	if (!session)
-	// 		await solid.auth.login(idp);
-	// 	else
-	// 		alert(`Logged in as ${session.webId}`);
-	// }
-	// login('https://solid.community');
-
-	render() {
+	fun() {
+		console.log("fun");
 		return (
-			<View>
-				<View style={styles.container}>
-					<Text>Form</Text>
-					<TextInput
-						style={styles.input}
-						placeholder="Solid ID"
-						onChangeText={(username) => this.setState({ username })}
-						value={this.state.username}></TextInput>
-					<TextInput
-						style={styles.input}
-						secureTextEntry={true}
-						placeholder="Password"
-						onChangeText={(password) => this.setState({ password })}
-						value={this.state.password}></TextInput>
-					<Button
-						title={'Login'}
-						style={styles.input}
-						onPress={this.check_session} />
-				</View>
-				<View>
-					<Text>Your WebID is: {this.state.webId}.</Text>
-				</View>
-			</View>
+			<>
+				<Text>function</Text>
+			</>
 		);
 	}
 
+	getWebId() {
+		auth.currentSession().then(resp => {
+			return resp.webId;
+		}).catch((err) => {
+			return null;
+		});
+	}
+
+	async login(idp) {
+		try {
+			auth.login("https://solid.community/.well-known/solid/login", AsyncStorage)
+				.then(resp => {
+					console.log("auth login resp: " + JSON.stringify(resp));
+				}).catch(err => {
+					console.log("auth login err: " + JSON.stringify(err));
+				});
+		} catch (ex) {
+			if (ex instanceof TypeError) {
+				console.log("type error: " + ex.message);
+				// await externalLogin(idp).then(resp => {
+				// 	console.log("external open: " + resp);
+				// }).catch(err => {
+				// 	console.log("external open err: " + err);
+				// });
+			}
+		}
+	}
+
+	check() {
+		console.log("check");
+		auth.currentSession()
+			.then(sess => {
+				console.log("auth currentsession resp:" + JSON.stringify(sess));
+				if (!sess) {
+					console.log("need to login");
+					// login();
+				} else {
+					this.setState({
+						session: sess,
+						webId: sess.webId
+					})
+				}
+			})
+			.catch(err => {
+				console.log("auth currentsession err: " + JSON.stringify(err));
+			})
+	}
+
+	render() {
+		return (
+			<View style={styles.container} >
+				<Text>idp: {idp}</Text>
+				<StatusBar style="auto" />
+				<Text>{this.fun()}</Text>
+				<Text>WebId: {this.state.webId}</Text>
+				<Button
+					title={'Login'}
+					style={styles.input}
+					onPress={this.login.bind(this)} />
+				{/* <ExternalLogin /> */}
+			</View>
+		);
+	}
 }
+
+const idp = "https://solid.community";
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: '#fff',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+});

@@ -1,4 +1,12 @@
 {
-  "name": "AwesomeProject",
-  "displayName": "AwesomeProject"
+  "name": "exposolidreactnative",
+  "displayName": "exposolidreactnative",
+  "expo": {
+    "name": "exposolidreactnative",
+    "slug": "exposolidreactnative",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
 }

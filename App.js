@@ -25,29 +25,34 @@ export default class App extends Component {
      *  localhost:3000
      *  localhost:8081
      */
-    fetch('http://abeb8686fb50.ngrok.io/login', {
+    fetch('https://3b077b31b633.ngrok.io/login', {
       method: "POST",
       headers: {
         Accept: 'application-json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        username: this.state.username,
+        email: this.state.username,
         password: this.state.password,
         idp: this.state.idp
       })
     }).then((resp) => {
-      // 
-      Alert.alert(resp);
+      // this.setState((state) => {
+      //   webId: resp
+      // });
+      console.log(resp);
     }).catch((err) => {
-      Alert.alert(err);
+      console.log(err);
     });
+    console.log("after");
   }
 
   render() {
     return (
       <View style={styles.container}>
         <Text>Form</Text>
+        <Text>Your webId is: {this.state.webId}. </Text>
         <TextInput
           style={styles.input}
           placeholder="Solid ID"

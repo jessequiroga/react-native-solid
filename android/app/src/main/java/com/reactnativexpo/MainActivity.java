@@ -1,4 +1,5 @@
-package com.exposolidreactnative;
+package com.reactnativexpo;
+
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;

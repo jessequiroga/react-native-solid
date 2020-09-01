@@ -1,4 +1,4 @@
-package com.exposolidreactnative.generated;
+package com.reactnativexpo.generated;
 
 import java.util.Arrays;
 import java.util.List;

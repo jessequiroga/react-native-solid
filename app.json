@@ -1,9 +1,9 @@
 {
-  "name": "exposolidreactnative",
-  "displayName": "exposolidreactnative",
+  "name": "reactnativexpo",
+  "displayName": "reactnativexpo",
   "expo": {
-    "name": "exposolidreactnative",
-    "slug": "exposolidreactnative",
+    "name": "reactnativexpo",
+    "slug": "reactnativexpo",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"

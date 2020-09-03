@@ -44,17 +44,16 @@ export default class App extends Component {
 				password: this.state.password,
 				idp: this.state.idp
 			})
-		}).then(response => response.json())
-			.then(data => {
-				console.log(data);
-				console.log("keys: " + Object.keys(data));
-				this.setState((state) => ({
-					webId: data.webId,
-					session: data,
-					loggedIn: true
-				}));
-				console.log("state: " + JSON.stringify(this.state));
-			})
+		}).then(response => response.json()).then(data => {
+			console.log(data);
+			console.log("keys: " + Object.keys(data));
+			this.setState((state) => ({
+				webId: data.webId,
+				session: data,
+				loggedIn: true
+			}));
+			console.log("state: " + JSON.stringify(this.state));
+		})
 			.catch(error => error.json())
 			.catch(error => {
 				console.log(error);

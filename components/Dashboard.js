@@ -6,23 +6,40 @@ export default class Dashboard extends Component {
     constructor(props) {
         super(props);
         console.log("dashboard ctor");
-        this.logout = this.logout.bind(this);
         this.state = {
             loggedIn: this.props.loggedIn,
-            user: this.props.session.webId
+            webId: this.props.session.webId
         }
+        this.logout = this.logout.bind(this);
         console.log("dashboard logged= " + this.state.loggedIn)
     }
 
     logout() {
         console.log("logout");
-
+        fetch('https://e7de78e4e4f3.ngrok.io/logout', {
+            method: "POST",
+            headers: {
+                Accept: 'application-json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+                webId: this.state.webId
+            })
+        }).then((resp) => {
+            console.log("logout successful");
+            this.setState((state) => ({
+                loggedIn: false,
+                webId: ""
+            }))
+            window.location.reload();
+        });
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text>Welcome {this.state.user}</Text>
+                <Text>Welcome {this.state.webId}</Text>
                 <Button
                     title={'Logout'}
                     style={styles.input}

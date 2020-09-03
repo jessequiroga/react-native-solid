@@ -25,7 +25,7 @@ export default class App extends Component {
      *  localhost:3000
      *  localhost:8081
      */
-    fetch('https://3b077b31b633.ngrok.io/login', {
+    fetch('https://e7de78e4e4f3.ngrok.io/login', {
       method: "POST",
       headers: {
         Accept: 'application-json',
@@ -33,18 +33,21 @@ export default class App extends Component {
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify({
-        email: this.state.username,
+        username: this.state.username,
         password: this.state.password,
         idp: this.state.idp
       })
-    }).then((resp) => {
-      // this.setState((state) => {
-      //   webId: resp
-      // });
-      console.log(resp);
-    }).catch((err) => {
-      console.log(err);
-    });
+    }).then(response => response.json())
+      .then(data => {
+        console.log(data);
+        console.log("keys: " + Object.keys(data));
+        this.setState((state) => ({ webId: data.webId }));
+        console.log("state: " + JSON.stringify(this.state));
+      })
+      .catch(error => error.json())
+      .catch(error => {
+        console.log(error);
+      })
     console.log("after");
   }
 

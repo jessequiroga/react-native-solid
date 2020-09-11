@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native'
-
 export default class Dashboard extends Component {
 
     constructor(props) {
@@ -16,7 +15,7 @@ export default class Dashboard extends Component {
 
     logout() {
         console.log("logout");
-        fetch('https://e7de78e4e4f3.ngrok.io/logout', {
+        fetch('http://9bcc710cca74.ngrok.io/logout', {
             method: "POST",
             headers: {
                 Accept: 'application-json',

@@ -10,7 +10,7 @@ export default class App extends Component {
 		this.state = {
 			username: "",
 			password: "",
-			idp: "https://solid.community",
+			idp: "https://solid.community/",
 			webId: "",
 			session: {},
 			loggedIn: false
@@ -32,7 +32,7 @@ export default class App extends Component {
 		 *  localhost:3000
 		 *  localhost:8081
 		 */
-		fetch('https://e7de78e4e4f3.ngrok.io/login', {
+		fetch('http://9bcc710cca74.ngrok.io/login', {
 			method: "POST",
 			headers: {
 				Accept: 'application-json',
@@ -45,8 +45,7 @@ export default class App extends Component {
 				idp: this.state.idp
 			})
 		}).then(response => response.json()).then(data => {
-			console.log(data);
-			console.log("keys: " + Object.keys(data));
+			// console.log(data);
 			this.setState((state) => ({
 				webId: data.webId,
 				session: data,
@@ -62,48 +61,44 @@ export default class App extends Component {
 	}
 
 	render() {
-		if (this.state.loggedIn) {
-			return (
-				<Dashboard loggedIn={this.state.loggedIn} session={this.state.session} />
-			)
-		} else {
-			return (
-				<View style={styles.container}>
-					<Text>Form</Text>
-					<Text>Your webId is: {this.state.webId}. </Text>
-					<TextInput
-						style={styles.input}
-						placeholder="Solid ID"
-						onChangeText={(username) => this.setState({ username })}
-						value={this.state.username}></TextInput>
-					<TextInput
-						style={styles.input}
-						secureTextEntry={true}
-						placeholder="Password"
-						onChangeText={(password) => this.setState({ password })}
-						value={this.state.password}></TextInput>
-					<Picker
-						selectedValue={this.state.idp}
-						style={{ height: 50, width: 150 }}
-						onValueChange={(idp) => this.setState({ idp })}
-					>
-						<Picker.Item label="solid.community" value="https://solid.community/" />
-						<Picker.Item label="inrupt.net" value="https://inrupt.net/" />
-					</Picker>
-					<Button
-						title={'Login'}
-						style={styles.input}
-						onPress={this.login} />
-					<Button
-						title={'Check'}
-						style={styles.input}
-						onPress={this.check}
-					/>
-				</View>
-			);
-		}
+		// if (this.state.loggedIn) {
+		// 	return (
+		// 		<Dashboard loggedIn={this.state.loggedIn} session={this.state.session} />
+		// 	)
+		// } else {
+		return (
+			<View style={styles.container}>
+				<Text>Form</Text>
+				<Text>Your webId is: {this.state.webId}. </Text>
+				<TextInput
+					style={styles.input}
+					placeholder="Solid ID"
+					onChangeText={(username) => this.setState({ username })}
+					value={this.state.username}></TextInput>
+				<TextInput
+					style={styles.input}
+					secureTextEntry={true}
+					placeholder="Password"
+					onChangeText={(password) => this.setState({ password })}
+					value={this.state.password}></TextInput>
+				<Picker
+					selectedValue={this.state.idp}
+					style={{ height: 50, width: 150 }}
+					onValueChange={(idp) => this.setState({ idp })}
+				>
+					<Picker.Item label="solid.community" value="https://solid.community/" />
+					<Picker.Item label="progekta.eu" value="https://progekta.eu/" />
+					<Picker.Item label="inrupt.net" value="https://inrupt.net/" />
+				</Picker>
+				<Button
+					title={'Login'}
+					style={styles.input}
+					onPress={this.login} />
+			</View>
+		);
 	}
 }
+// }
 
 const styles = StyleSheet.create({
 	container: {

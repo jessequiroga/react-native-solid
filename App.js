@@ -1,7 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from "react";
-import { Alert, StyleSheet, Text, TextInput, Button, View, Picker } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, Button, View } from 'react-native';
 import Dashboard from './components/Dashboard';
+import AsyncStorage from '@react-native-community/async-storage';
+import { Picker } from '@react-native-community/picker'
 
 export default class App extends Component {
 	constructor(props) {
@@ -17,6 +19,33 @@ export default class App extends Component {
 		}
 		this.login = this.login.bind(this);
 		this.check = this.check.bind(this);
+		this.storage = this.storage.bind(this);
+	}
+
+	storeData(key, value) {
+		console.info("storeData");
+		try {
+			AsyncStorage.setItem(key, value).then(resp => {
+				console.info("resp: " + resp);
+			});
+
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	getData(key) {
+		console.info("getData");
+		try {
+			return AsyncStorage.getItem(key);
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	storage() {
+		var keys = AsyncStorage.getAllKeys();
+		console.log("storage: " + JSON.stringify(AsyncStorage.getAllKeys()));
 	}
 
 	check() {
@@ -25,6 +54,11 @@ export default class App extends Component {
 
 	login() {
 		console.log("\tlogin!");
+		this.storeData('@idp', this.state.idp);
+		this.getData('@idp').then(resp => {
+			var value = resp;
+			console.info("store and read: " + value);
+		});
 		console.log("username: " + this.state.username + ", password: " + this.state.password + ", idp: " + this.state.idp);
 		/**
 		 * Here is the URL of the listening Rest API server
@@ -32,7 +66,7 @@ export default class App extends Component {
 		 *  localhost:3000
 		 *  localhost:8081
 		 */
-		fetch('http://9bcc710cca74.ngrok.io/login', {
+		fetch('http://08309cb49417.ngrok.io/login', {
 			method: "POST",
 			headers: {
 				Accept: 'application-json',
@@ -45,15 +79,15 @@ export default class App extends Component {
 				idp: this.state.idp
 			})
 		}).then(response => response.json()).then(data => {
-			// console.log(data);
 			this.setState((state) => ({
 				webId: data.webId,
 				session: data,
 				loggedIn: true
 			}));
+			this.storeData('@idtoken', data.authorization.id_token);
 			console.log("state: " + JSON.stringify(this.state));
 		})
-			.catch(error => error.json())
+			.catch(error => { })
 			.catch(error => {
 				console.log(error);
 			})
@@ -93,7 +127,8 @@ export default class App extends Component {
 				<Button
 					title={'Login'}
 					style={styles.input}
-					onPress={this.login} />
+					onPress={this.login}
+				/>
 			</View>
 		);
 	}

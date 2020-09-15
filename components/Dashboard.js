@@ -15,7 +15,7 @@ export default class Dashboard extends Component {
 
     logout() {
         console.log("logout");
-        fetch('http://9bcc710cca74.ngrok.io/logout', {
+        fetch('http://08309cb49417.ngrok.io/logout', {
             method: "POST",
             headers: {
                 Accept: 'application-json',

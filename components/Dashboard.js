@@ -1,21 +1,55 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native'
+import {
+    Button,
+    FlatList,
+    StyleSheet,
+    Text,
+    View
+} from 'react-native'
+import { Card, Header, ListItem } from 'react-native-elements';
+
 export default class Dashboard extends Component {
 
     constructor(props) {
         super(props);
-        console.log("dashboard ctor");
+        console.log("dash ctor");
         this.state = {
-            loggedIn: this.props.loggedIn,
-            webId: this.props.session.webId
+            webId: this.props.webId,
+            public_folder: []
         }
         this.logout = this.logout.bind(this);
-        console.log("dashboard logged= " + this.state.loggedIn)
+        console.log("dash logged= " + this.state.webId)
+    }
+
+    componentDidMount() {
+        console.log("dash component did mount");
+        this.fetch_public();
+    }
+
+    fetch_public() {
+        console.log("dash fetch_public");
+        fetch('http://063b4a83f166.ngrok.io/getpublic', {
+            method: "GET",
+            headers: {
+                Accept: 'application-json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'webId': this.state.webId
+            }
+        }).then(resp => resp.json()).then(data => {
+            console.log("dash fetch resp " + data);
+            this.setState((state) => ({
+                public_folder: data.files
+            }));
+            console.info("state files: " + JSON.stringify(this.state.public_folder));
+        }).catch(err => {
+            console.error("dash fetch err " + err);
+        });
     }
 
     logout() {
-        console.log("logout");
-        fetch('http://08309cb49417.ngrok.io/logout', {
+        console.log("dash logout");
+        fetch('http://063b4a83f166.ngrok.io/logout', {
             method: "POST",
             headers: {
                 Accept: 'application-json',
@@ -38,7 +72,26 @@ export default class Dashboard extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text>Welcome {this.state.webId}</Text>
+                <Header
+                    // leftComponent={{ icon: 'menu', color: '#fff' }}
+                    centerComponent={{ text: this.state.webId, style: { color: '#fff' } }}
+                // rightComponent={{ icon: 'home', color: '#fff' }}
+                />
+                <Text style={styles.text}>Welcome {this.state.webId}</Text>
+                <Card containerStyle={{ padding: 0 }} >
+                    {
+                        this.state.public_folder.map((k, v) => {
+                            <ListItem
+                                key={v}
+                                title={v.name}
+                            />
+                        })
+                    }
+                </Card>
+                <FlatList
+                    data={this.state.public_folder}
+                    renderItem={({ item }) => <Text style={styles.item}>{item.name}</Text>}
+                />
                 <Button
                     title={'Logout'}
                     style={styles.input}
@@ -67,4 +120,12 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         marginBottom: 10,
     },
+    item: {
+        padding: 10,
+        fontSize: 18,
+        height: 44,
+    },
+    text: {
+        padding: 5
+    }
 });

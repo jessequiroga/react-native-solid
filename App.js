@@ -3,8 +3,9 @@ import React, { Component } from "react";
 import { Alert, StyleSheet, Text, TextInput, Button, View } from 'react-native';
 import Dashboard from './components/Dashboard';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Picker } from '@react-native-community/picker'
-
+// import { Picker } from '@react-native-community/picker'
+import DropDownPicker from 'react-native-dropdown-picker';
+import Icon from 'react-native-vector-icons/Feather';
 export default class App extends Component {
 	constructor(props) {
 		super(props);
@@ -12,7 +13,7 @@ export default class App extends Component {
 		this.state = {
 			username: "",
 			password: "",
-			idp: "https://solid.community/",
+			idp: "https://progekta.eu/",
 			webId: "",
 			session: {},
 			loggedIn: false
@@ -60,13 +61,7 @@ export default class App extends Component {
 			console.info("store and read: " + value);
 		});
 		console.log("username: " + this.state.username + ", password: " + this.state.password + ", idp: " + this.state.idp);
-		/**
-		 * Here is the URL of the listening Rest API server
-		 * Try:
-		 *  localhost:3000
-		 *  localhost:8081
-		 */
-		fetch('http://08309cb49417.ngrok.io/login', {
+		fetch('http://063b4a83f166.ngrok.io/login', {
 			method: "POST",
 			headers: {
 				Accept: 'application-json',
@@ -95,27 +90,28 @@ export default class App extends Component {
 	}
 
 	render() {
-		// if (this.state.loggedIn) {
-		// 	return (
-		// 		<Dashboard loggedIn={this.state.loggedIn} session={this.state.session} />
-		// 	)
-		// } else {
-		return (
-			<View style={styles.container}>
-				<Text>Form</Text>
-				<Text>Your webId is: {this.state.webId}. </Text>
-				<TextInput
-					style={styles.input}
-					placeholder="Solid ID"
-					onChangeText={(username) => this.setState({ username })}
-					value={this.state.username}></TextInput>
-				<TextInput
-					style={styles.input}
-					secureTextEntry={true}
-					placeholder="Password"
-					onChangeText={(password) => this.setState({ password })}
-					value={this.state.password}></TextInput>
-				<Picker
+		if (this.state.loggedIn) {
+			return (
+				<Dashboard webId={this.state.webId} />
+			)
+		} else {
+			return (
+				<>
+					<View style={styles.container}>
+						<Text>Form</Text>
+						<Text>Your webId is: {this.state.webId}. </Text>
+						<TextInput
+							style={styles.input}
+							placeholder="Solid ID"
+							onChangeText={(username) => this.setState({ username })}
+							value={this.state.username}></TextInput>
+						<TextInput
+							style={styles.input}
+							secureTextEntry={true}
+							placeholder="Password"
+							onChangeText={(password) => this.setState({ password })}
+							value={this.state.password}></TextInput>
+						{/* <Picker
 					selectedValue={this.state.idp}
 					style={{ height: 50, width: 150 }}
 					onValueChange={(idp) => this.setState({ idp })}
@@ -123,17 +119,37 @@ export default class App extends Component {
 					<Picker.Item label="solid.community" value="https://solid.community/" />
 					<Picker.Item label="progekta.eu" value="https://progekta.eu/" />
 					<Picker.Item label="inrupt.net" value="https://inrupt.net/" />
-				</Picker>
-				<Button
-					title={'Login'}
-					style={styles.input}
-					onPress={this.login}
-				/>
-			</View>
-		);
+				</Picker> */}
+						<DropDownPicker
+							items={[
+								{ label: 'progekta.eu', value: 'https://progekta.eu/' },
+								{ label: 'solid.community', value: 'https://solid.community/' },
+								{ label: 'inrupt.net', value: 'https://inrupt.net/' }
+							]}
+							defaultValue={this.state.idp}
+							containerStyle={{ height: 40 }}
+							style={{ backgroundColor: '#fafafa' }}
+							itemStyle={{
+								justifyContent: 'flex-start'
+							}}
+							dropDownStyle={{ backgroundColor: '#fafafa' }}
+							onChangeItem={item => this.setState({
+								idp: item.value
+							})}
+						/>
+
+						<Button
+							title={'Login'}
+							style={styles.input}
+							onPress={this.login}
+						/>
+					</View>
+				</>
+
+			);
+		}
 	}
 }
-// }
 
 const styles = StyleSheet.create({
 	container: {
@@ -141,9 +157,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		// backgroundColor: '#ecf0f1',
-	},
-	Button: {
-		width: 200,
 	},
 	input: {
 		width: 200,
@@ -153,4 +166,7 @@ const styles = StyleSheet.create({
 		borderColor: 'black',
 		marginBottom: 10,
 	},
+    text: {
+        padding: 5
+    }
 });
